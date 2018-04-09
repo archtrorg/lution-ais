@@ -1573,9 +1573,8 @@ install_de_wm() {
     "16" $"Ice WM" \
     "17" $"Openbox WM" \
     "18" $"Openbox + Evo (EvoBox)" \
-    "19" $"Pek WM" \
-    "20" $"WindowMaker WM" 2>${ANSWER}
-
+    "19" $"Pek WM" 2>${ANSWER}
+   
    case $(cat ${ANSWER}) in
         "1") # Cinnamon
              clear
@@ -1655,7 +1654,7 @@ install_de_wm() {
              ;;
         "14") #Fluxbox
               clear 
-              pacstrap ${MOUNTPOINT} fluxbox fbnews fluxter polkit-gnome 2>/tmp/.errlog
+              pacstrap ${MOUNTPOINT} fluxbox polkit-gnome 2>/tmp/.errlog
              ;; 
         "15") #i3
               clear
@@ -1663,7 +1662,7 @@ install_de_wm() {
              ;; 
         "16") #IceWM
               clear
-              pacstrap ${MOUNTPOINT} icewm icewm-themes polkit-gnome 2>/tmp/.errlog
+              pacstrap ${MOUNTPOINT} icewm polkit-gnome 2>/tmp/.errlog
              ;; 
         "17") #Openbox
               clear
@@ -1755,13 +1754,7 @@ install_de_wm() {
         "19") #PekWM
               clear
               pacstrap ${MOUNTPOINT} pekwm pekwm-themes polkit-gnome 2>/tmp/.errlog
-             ;;
-        "20") #WindowMaker
-             clear
-             pacstrap ${MOUNTPOINT} windowmaker polkit-gnome 2>/tmp/.errlog
-             ;;        
-          *) install_desktop_menu
-             ;;
+             ;;                         
     esac  
     
     check_for_error
