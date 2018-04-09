@@ -1482,7 +1482,7 @@ install_gc() {
       "Intel") pacstrap ${MOUNTPOINT} xf86-video-intel libva-intel-driver intel-ucode 2>/tmp/.errlog
                sed -i 's/MODULES=""/MODULES="i915"/' ${MOUNTPOINT}/etc/mkinitcpio.conf
                
-               # Intel microcode (Syslinux and Gummiboot).
+               # Intel microcode (Syslinux).
                # Grub automatically deals with this. rEFInd is yet to be added.
                case $BOOTLADER in
 				    "Syslinux") sed -i 's/INITRD /INITRD/g' ${MOUNTPOINT}/boot/syslinux/syslinux.cfg
