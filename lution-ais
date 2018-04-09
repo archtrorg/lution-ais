@@ -1714,7 +1714,7 @@ install_de_wm() {
 			  esac
 			  			  
               clear
-              pacstrap ${MOUNTPOINT} openbox oblogout openbox-themes mate-themes xcursor-vanilla-dmz tint2 conky libgnomeui obconf lxappearance-obconf lxinput lxrandr lxterminal volumeicon gnome-alsamixer dmenu xlockmore flashplugin polkit-gnome ${EVOBOXFM} ${EVOBOXIB} 2>/tmp/.errlog
+              pacstrap ${MOUNTPOINT} openbox oblogout openbox-themes mate-themes xcursor-vanilla-dmz tint2 conky obconf lxappearance-obconf lxinput lxrandr lxterminal volumeicon gnome-alsamixer dmenu xlockmore flashplugin polkit-gnome ${EVOBOXFM} ${EVOBOXIB} 2>/tmp/.errlog
               
               cp -f /lution-ais-master/evobox/oblogout.conf ${MOUNTPOINT}/etc
               cp -f /lution-ais-master/evobox/.gtkrc-2.0 ${MOUNTPOINT}/root
