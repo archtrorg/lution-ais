@@ -1614,12 +1614,12 @@ install_de_wm() {
              ;;
         "6") # KDE PLASMA MİNİMAL
              clear
-             pacstrap ${MOUNTPOINT} plasma konsole kdebase-dolphin kate kdeutils-ark xdg-utils sddm rp-pppoe 2>/tmp/.errlog
+             pacstrap ${MOUNTPOINT} plasma  kdebase xdg-utils sddm rp-pppoe 2>/tmp/.errlog
              KDE_INSTALLED=1
              ;;
         "7") # KDE PLASMA 
              clear
-             pacstrap ${MOUNTPOINT} plasma konsole kdebase-dolphin kate kdeutils-ark xdg-utils sddm kdegraphics-ksnapshot baloo4-widgets kdebase-kdialog konsolepart4 kdebase-kfind breeze breeze-icons  gwenview rp-pppoe 2>/tmp/.errlog
+             pacstrap ${MOUNTPOINT} plasma kdebase  kde-applications xdg-utils sddm  breeze gwenview rp-pppoe 2>/tmp/.errlog
 
              if [[ $NM_INSTALLED -eq 0 ]]; then          
                 arch_chroot "systemctl enable NetworkManager.service && systemctl enable NetworkManager-dispatcher.service" 2>>/tmp/.errlog
