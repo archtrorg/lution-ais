@@ -415,7 +415,7 @@ generate_fstab() {
 # Adapted from AIS.
 set_hostname() {
 
-   dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$_HostNameTitle" --inputbox "$_HostNameBody" 0 0 "evo" 2>${ANSWER} || config_base_menu
+   dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$_HostNameTitle" --inputbox "$_HostNameBody" 0 0 "archkur" 2>${ANSWER} || config_base_menu
    HOST_NAME=$(cat ${ANSWER})
 
    echo "$HOST_NAME" > ${MOUNTPOINT}/etc/hostname 2>/tmp/.errlog
