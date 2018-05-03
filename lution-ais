@@ -2298,7 +2298,7 @@ edit_configs() {
               user_list=$(ls ${MOUNTPOINT}/home/ | sed "s/lost+found//")
 				   for i in ${user_list[@]}; do
                        if [[ -e ${MOUNTPOINT}/home/$i/.xinitrc ]]; then
-                          gksu leafpad ${MOUNTPOINT}/home/$i/.xinitrc >/dev/null 2>&1
+                          sudo leafpad ${MOUNTPOINT}/home/$i/.xinitrc >/dev/null 2>&1
 	                   else
 	                      dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$__SeeConfErrTitle" --msgbox "$_SeeConfErrBody1" 0 0
 	                      break;
