@@ -275,7 +275,7 @@ dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$_MirrorlistTitle" \
     case $(cat ${ANSWER}) in
         "1") mirror_by_country
              ;;
-        "2") gksu leafpad /etc/pacman.d/mirrorlist
+        "2") sudo leafpad /etc/pacman.d/mirrorlist
              ;;
           *) prep_menu
              ;;
