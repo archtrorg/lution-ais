@@ -109,7 +109,7 @@ _DevShowTitle=" Diskler / Bölümler "
 _DevShowOpt="Disk Listesi (seçimli)"
 
 # Check Evo Requirements and Identify System Type
-_ChkEvoTitle=" Evo Gereksinimleri Kontrol Ediliyor "
+_ChkEvoTitle=" Archkur Gereksinimleri Kontrol Ediliyor "
 _ChkEvoBody="\nRoot olarak yükleyicinin çalışması ve aktif internet bağlantısı kontrol edilmiştir. Lütfen bekleyin...\n\n"
 
 _RtFailTitle=" Root Başarısız "
@@ -228,7 +228,7 @@ _PartToolTitle=" Bölümleme Aracı "
 _PartToolBody="\nGParted is a recommended user-friendly graphical tool that supports both BIOS and UEFI systems.\n\nDO NOT select a UEFI/GPT-only partitioning tool for a BIOS/MBR system as this could cause serious problems, including an unbootable installation."
 
 # UEFI Partitioning Error
-_UefiPartErrTitle=" UEFI Partitioning Error " 
+_UefiPartErrTitle=" UEFI Bölümleme Hatası " 
 _UefiPartErrBody="\nUEFI systems require a minimum of two partitions for installation (ROOT and UEFI).\n\nLütfen bölümlerinizi yapılandırın.\n\n"
 
 # BIOS Partitioning Error
@@ -315,7 +315,7 @@ _SetGrubDefBody="\nSome UEFI firmware may not detect Grub unless it is set as th
 _SetGrubDefBody2="and rename it to bootx64.efi, as required.\n\nOtherwise select 'No', particularly if there is already a default bootloader, and/or where intending to use multiple bootloaders."
 
 # Gummiboot Configuration Check
-_ChkGumTitle=" Gummiboot Konfigurasyon Konrolü"
+_ChkGumTitle=" Yapılandırma Konfigurasyon Konrolü"
 _ChkGumBody="\nPlease check the arch and loader configuration files before closing them to continue.\n"
 
 # Set rEFInd as default
