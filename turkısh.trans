@@ -108,7 +108,7 @@ _LvmCompBody="\nBitti! Tüm Mantıksal alan Grubu Oluşturuldu.\n\nYeni LVM şem
 _DevShowTitle=" Diskler / Bölümler "
 _DevShowOpt="Disk Listesi (seçimli)"
 
-# Check Evo Requirements and Identify System Type
+# Check Archkur Requirements and Identify System Type
 _ChkEvoTitle=" Archkur Gereksinimleri Kontrol Ediliyor "
 _ChkEvoBody="\nRoot olarak yükleyicinin çalışması ve aktif internet bağlantısı kontrol edilmiştir. Lütfen bekleyin...\n\n"
 
