@@ -1173,7 +1173,7 @@ bios_bootloader() {
 			       clear
 			       dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title " Grub-install " --infobox "$_PlsWaitBody" 0 0
                    sleep 1 
-			       arch_chroot "grub-install --target=i386-pc --recheck ${INST_DEV}" 2>/tmp/.errlog
+			       arch_chroot "grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB" 2>/tmp/.errlog
 			       check_for_error
 			    else   
 			       select_grub_device
