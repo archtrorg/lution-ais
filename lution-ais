@@ -1839,7 +1839,7 @@ install_de_wm() {
        
        if [[ $? -eq 0 ]]; then
           clear
-          pacstrap ${MOUNTPOINT} xterm gksu gnome-keyring polkit xdg-user-dirs xdg-utils gamin gvfs gvfs-afc gvfs-smb ttf-dejavu gnome-icon-theme python2-xdg bash-completion ntfs-3g 2>/tmp/.errlog
+          pacstrap ${MOUNTPOINT} xterm gnome-keyring polkit xdg-user-dirs xdg-utils  gvfs gvfs-afc gvfs-smb ttf-dejavu gnome-icon-theme python2-xdg bash-completion ntfs-3g 2>/tmp/.errlog
           check_for_error
        fi
        
