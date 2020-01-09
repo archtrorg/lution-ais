@@ -96,57 +96,21 @@ FILE2=""                    # Some configs use two files. Not using an array.
 # Add locale on-the-fly and sets source translation file for installer
 select_language() {
 
-    dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title " Select Language " --menu "\nLanguage / sprache / taal / nγλώσσα / språk / lingua / idioma / язык / język / nyelv / língua" 22 30 11 \
+    dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title " Select Language " --menu "\nLanguage  / Dil" 22 30 2 \
  	"1" $"English" \
- 	"2" $"Deutsch" \
- 	"3" $"Nederlands" \
- 	"4" $"Eλληνικά" \
- 	"5" $"Norsk" \
- 	"6" $"Italiano" \
- 	"7" $"Español" \
- 	"8" $"Русский" \
- 	"9" $"Polski" \
- 	"10" $"Magyar" \
- 	"11" $"Portugese" 2>${ANSWER}
-
+ 	"2" $"Turkısh" 2>${ANSWER}
+ 	
 	case $(cat ${ANSWER}) in
         "1") source /lution-ais-master/english.trans
              EVO_LOCALE="en_US.UTF-8"
              ;;
-        "2") source /lution-ais-master/german.trans
-             EVO_LOCALE="de_DE.UTF-8" 
-             ;;
-        "3") source /lution-ais-master/dutch.trans
-             EVO_LOCALE="nl_NL.UTF-8"
-             ;;
-        "4") source /lution-ais-master/greek.trans
-             EVO_LOCALE="el_GR.UTF-8"
-             ;;
-        "5") source /lution-ais-master/norwegian.trans
-             EVO_LOCALE="nl_NL.UTF-8"
-             ;;
-        "6") source /lution-ais-master/italian.trans
-             EVO_LOCALE="it_IT.UTF-8"
-             ;;
-        "7") source /lution-ais-master/spanish.trans
-             EVO_LOCALE="es_ES.UTF-8"
-             ;;
-        "8") source /lution-ais-master/russian.trans
-             EVO_LOCALE="ru_RU.UTF-8"
-             ;;
-        "9") source /lution-ais-master/polish.trans
-             EVO_LOCALE="pl_PL.UTF-8"
-             ;;
-       "10") source /lution-ais-master/hungarian.trans
-             EVO_LOCALE="hu_HU.UTF-8"  
-             ;;
-       "11") source /lution-ais-master/portuguese.trans
-             EVO_LOCALE="pt_PT.UTF-8"
+        "2") source /lution-ais-master/turkısh.trans
+             EVO_LOCALE="tr_TR.UTF-8"
              ;;
           *) exit 0
              ;;
     esac
-        
+          
     # Generate the chosen locale and set the language
     sed -i "s/#${EVO_LOCALE}/${EVO_LOCALE}/" /etc/locale.gen
     locale-gen >/dev/null 2>&1
@@ -610,7 +574,7 @@ select_grub_device() {
     clear
     dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title " Grub-install " --infobox "$_PlsWaitBody" 0 0
     sleep 1
-    arch_chroot "grub-install --target=i386-pc --recheck ${GRUB_DEVICE}" 2>/tmp/.errlog
+    arch_chroot "grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB${GRUB_DEVICE}" 2>/tmp/.errlog
     check_for_error
  
   }
@@ -1177,7 +1141,7 @@ install_base() {
      dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$_InstWirTitle" --infobox "$_InstWirBody" 0 0 
      sleep 2
      clear
-     pacstrap ${MOUNTPOINT} iw wireless_tools wpa_supplicant dialog 2>/tmp/.errlog
+     pacstrap ${MOUNTPOINT} iw wireless_tools wpa_actiond wpa_supplicant dialog 2>/tmp/.errlog
      check_for_error
   fi
 
@@ -1209,7 +1173,7 @@ bios_bootloader() {
 			       clear
 			       dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title " Grub-install " --infobox "$_PlsWaitBody" 0 0
                    sleep 1 
-			       arch_chroot "grub-install --target=i386-pc --recheck ${INST_DEV}" 2>/tmp/.errlog
+			       arch_chroot "grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB" 2>/tmp/.errlog
 			       check_for_error
 			    else   
 			       select_grub_device
@@ -1261,9 +1225,10 @@ uefi_bootloader() {
 	[[ -z $(mount | grep /sys/firmware/efi/efivars) ]] && mount -t efivarfs efivarfs /sys/firmware/efi/efivars
      
     dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$_InstUefiBtTitle" \
-    --menu "$_InstUefiBtBody" 0 0 2 \
+    --menu "$_InstUefiBtBody" 0 0 3 \
     "1" $"Grub2" \
-    "2" $"rEFInd" 2>${ANSWER}
+    "2" $"Gummiboot" \
+    "3" $"rEFInd" 2>${ANSWER}
 
      case $(cat ${ANSWER}) in
      "1") # Grub2
@@ -1291,7 +1256,37 @@ uefi_bootloader() {
           BOOTLOADER="Grub"
           ;;
           
-      "2") # rEFInd
+     "2") # Gummiboot
+          clear
+          pacstrap ${MOUNTPOINT} gummiboot efibootmgr dosfstools 2>/tmp/.errlog
+          arch_chroot "gummiboot --path=${UEFI_MOUNT} install" 2>>/tmp/.errlog
+          check_for_error
+          
+          # Deal with LVM Root
+          if [[ $LVM_ROOT -eq 0 ]]; then
+             gummi_root=$(blkid -s PARTUUID $"/dev/"${ROOT_PART} | sed 's/.*=//g' | sed 's/"//g')
+          else
+             gummi_root="/dev/mapper/${ROOT_PART}"
+             # $(blkid PARTUUID $"/dev/mapper/"${ROOT_PART} | awk '{print $2}' | sed 's/UUID=//' | sed 's/"//g') 
+          fi
+           
+          # Deal with LTS Kernel
+          if [[ $LTS -eq 1 ]]; then
+            echo -e "title\tArch Linux\nlinux\t/vmlinuz-linux-lts\ninitrd\t/initramfs-linux-lts.img\noptions\troot=PARTUUID=${gummi_root} rw" > ${MOUNTPOINT}/boot/loader/entries/arch.conf
+          else
+             echo -e "title\tArch Linux\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=PARTUUID=${gummi_root} rw" > ${MOUNTPOINT}/boot/loader/entries/arch.conf
+          fi
+          
+          # Fix LVM Root installations
+          [[ $LVM_ROOT -eq 1 ]] && sed -i "s/PARTUUID=//g" ${MOUNTPOINT}/boot/loader/entries/arch.conf
+          
+          BOOTLOADER="Gummiboot"
+          # Set the loader file  
+          echo -e "default  arch\ntimeout  5" > ${MOUNTPOINT}${UEFI_MOUNT}/loader/loader.conf 2>/tmp/.errlog
+          check_for_error
+          ;;
+          
+      "3") # rEFInd
            # Ensure that UEFI partition has been mounted to /boot/efi due to bug in script. Could "fix" it for installation, but
            # This could result in unknown consequences should the script be updated at some point.
            if [[ $UEFI_MOUNT == "/boot/efi" ]]; then      
@@ -1397,7 +1392,7 @@ install_alsa_xorg_input() {
 
      dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$_AXITitle" --msgbox "$_AXIBody" 0 0
      clear	
-     pacstrap ${MOUNTPOINT} alsa-utils xorg-server xorg-apps xorg-xinit xf86-input-synaptics 2>/tmp/.errlog
+     pacstrap ${MOUNTPOINT} alsa-utils xorg-server xorg-server-utils xorg-xinit xf86-input-synaptics xf86-input-keyboard xf86-input-mouse 2>/tmp/.errlog
      check_for_error
      
      # copy the keyboard configuration file, if generated
@@ -1596,8 +1591,8 @@ install_de_wm() {
 	"3" $"Gnome-Shell (minimal)" \
 	"4" $"Gnome" \
 	"5" $"Gnome + Extras" \
-    "6" $"KDE4 Base (minimal)" \
-    "7" $"KDE4" \
+    "6" $"KDE PLASMA MİNİMAL" \
+    "7" $"KDE PLASMA" \
     "8" $"LXDE" \
     "9" $"MATE" \
     "10" $"MATE + Extras" \
@@ -1648,14 +1643,14 @@ install_de_wm() {
            
              GNOME_INSTALLED=1
              ;;
-        "6") # KDE4 BASE
+        "6") # KDE PLASMA MİNİMAL
              clear
-             pacstrap ${MOUNTPOINT} kdebase-workspace kdeplasma-applets-plasma-nm xdg-utils rp-pppoe 2>/tmp/.errlog
+             pacstrap ${MOUNTPOINT} plasma konsole kdebase-dolphin kate kdeutils-ark xdg-utils sddm rp-pppoe 2>/tmp/.errlog
              KDE_INSTALLED=1
              ;;
-        "7") # KDE4 
+        "7") # KDE PLASMA 
              clear
-             pacstrap ${MOUNTPOINT} kde kdeplasma-applets-plasma-nm xdg-user-dirs xdg-utils rp-pppoe 2>/tmp/.errlog
+             pacstrap ${MOUNTPOINT} plasma konsole kdebase-dolphin kate kdeutils-ark xdg-utils sddm kdegraphics-ksnapshot baloo4-widgets kdebase-kdialog konsolepart4 kdebase-kfind breeze breeze-icons  gwenview rp-pppoe 2>/tmp/.errlog
 
              if [[ $NM_INSTALLED -eq 0 ]]; then          
                 arch_chroot "systemctl enable NetworkManager.service && systemctl enable NetworkManager-dispatcher.service" 2>>/tmp/.errlog
@@ -1808,7 +1803,7 @@ install_de_wm() {
        
        if [[ $? -eq 0 ]]; then
           clear
-          pacstrap ${MOUNTPOINT} xterm gnome-keyring polkit xdg-user-dirs xdg-utils gvfs gvfs-afc gvfs-smb ttf-dejavu gnome-icon-theme python2-xdg bash-completion ntfs-3g 2>/tmp/.errlog
+          pacstrap ${MOUNTPOINT} xterm gksu gnome-keyring polkit xdg-user-dirs xdg-utils gvfs gvfs-afc gvfs-smb ttf-dejavu gnome-icon-theme python2-xdg bash-completion ntfs-3g 2>/tmp/.errlog
           check_for_error
        fi
        
@@ -1825,7 +1820,7 @@ install_dm() {
  if [[ $DM_INSTALLED -eq 0 ]]; then
 	
           if  [[ $KDE_INSTALLED -eq 1 ]] && [[ $GNOME_INSTALLED -eq 0 ]]; then
-               arch_chroot "systemctl enable kdm.service" >/dev/null 2>/tmp/.errlog
+               arch_chroot "systemctl enable sddm.service" >/dev/null 2>/tmp/.errlog
                check_for_error
                dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$_DmKdeTitle" --msgbox "$_DmKdeBody" 0 0
          elif  [[ $KDE_INSTALLED -eq 0 ]] && [[ $GNOME_INSTALLED -eq 1 ]]; then
@@ -1837,14 +1832,14 @@ install_dm() {
                dialog --backtitle "$VERSION - $SYSTEM ($ARCHI)" --title "$_DmChTitle" \
                --menu "$_DmChBody" 12 45 2 \
  	           "1" $"GDM (Gnome)" \
-	           "2" $"KDM (KDE)" 2>${ANSWER}	
+	           "2" $"SDDM (KDE)" 2>${ANSWER}	
 	
 	          case $(cat ${ANSWER}) in
               "1") arch_chroot "systemctl enable gdm.service" >/dev/null 2>/tmp/.errlog
                    DM="GDM"
                 ;;
-              "2") arch_chroot "systemctl enable kdm.service" >/dev/null 2>/tmp/.errlog
-                   DM="KDM"
+              "2") arch_chroot "systemctl enable sddm.service" >/dev/null 2>/tmp/.errlog
+                   DM="SDDM"
                 ;;
                 *) install_desktop_menu
                 ;;
